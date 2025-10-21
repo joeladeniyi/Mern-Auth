@@ -2,7 +2,7 @@ import express  from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer'
-import { User } from '../models/User'
+import { User } from '../models/User.js'
 
 const router = express.Router()
 
@@ -87,4 +87,4 @@ router.post('/reset-password/:token',async (req,res) => {
     }
 })
 
-export {router as UserRouter}
+export default router 
