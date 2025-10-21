@@ -8,7 +8,7 @@ function Login  ()  {
     const [email, setEmail]=useState('')
     const [password, setPassord]=useState('')
        const navigate = useNavigate()
-      //  Axios.defaults.withCredentials = true
+        axios.defaults.withCredentials = true
     const handlesubmit = (e) =>{
         e.preventDefault()
         axios.post('https://localhost:3000/auth/login', {

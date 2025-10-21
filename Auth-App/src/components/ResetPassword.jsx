@@ -2,26 +2,25 @@ import React from 'react'
 import '../App.css'
 import { useState } from 'react'
 import axios, { Axios } from 'axios'
-import { Link, useNavigate } from 'react-router-dom'
-const ForgotPassword = () => {
-     const [email, setEmail]=useState('')
+import { Link, useNavigate, useParams } from 'react-router-dom'
+const ResetPassword = () => {
+     const [password, setPassword]=useState('')
+     const {token} = useParams()
 
        const navigate = useNavigate()
-      //  Axios.defaults.withCredentials = true
+      axios.defaults.withCredentials = true
     const handlesubmit = (e) =>{
         e.preventDefault()
-        axios.post('https://localhost:3000/auth/forgot-password', {
+        axios.post('https://localhost:3000/auth/reset-password'+token, {
             
-            email,
+            password,
         
         })
-        
         .then(response =>{
             
             if(response.data.status){
-              alert("check your mail for reset passwod link")
                 navigate('/login')}
-                 console.log(response.data)
+              console.log(response.data)
               })
                 
         .catch(error=>console.log(error))
@@ -30,10 +29,10 @@ const ForgotPassword = () => {
   return (
     <div className='sign-up-container'>
        <form className='sign-up-form' onSubmit={handlesubmit}>
-                  <h2>Forgot Password </h2>
+                  <h2>Reset Password </h2>
                   
-                   <label htmlFor='email'> Email:</label>
-                  <input type='email' placeholder='enter email' onChange={(e)=>setEmail(e.target.value)} className=''/>
+                   <label htmlFor='email'> Password:</label>
+                  <input type='password' placeholder='******' onChange={(e)=>setPassword(e.target.value)} className=''/>
                   
                   
                   <button type='submit'>Submit</button>
@@ -43,4 +42,4 @@ const ForgotPassword = () => {
   )
 }
 
-export default ForgotPassword
+export default ResetPassword

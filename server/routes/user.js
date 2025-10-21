@@ -1,6 +1,7 @@
 import express  from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import nodemailer from 'nodemailer'
 import { User } from '../models/User'
 
 const router = express.Router()
@@ -39,16 +40,51 @@ router.post('/login', async(req,res)=>{
 })
 router.post('/forgot-password', async(req,res)=>{
     const {email} = req.body
-     const user = await User.findOne({email})
-     if(!user){
-        res.json({message: "user does not exist"})
-     }
+     
      try {
-        
+        const user = await User.findOne({email})
+         if(!user){
+        res.json({message: "user does not exist"})
+                   }
+         var transporter = nodemailer.createTransport({
+            service : 'gmail',
+            auth: {
+                user : 'joeladeniyi40@gmail.com',
+                pass : ''
+            }
+         })
+         var mailOptions = {
+            from : 'joeladeniyi40@gmail.com',
+            to : email,
+            subject : 'Reset Password',
+            text : `${process.env.ORIGIN}/resetpassword/${token}`
+         }
+         transporter.sendMail(mailOptions, (error,info)=>{
+            if(error){
+            return res.json({message : 'error sending email'})
+            }else{
+                console.log("Email Sent," + info.response)
+            }
+         })
      } catch (error) {
-        
+        console.log(error)
      }
      
+})
+
+router.post('/reset-password/:token',async (req,res) => {
+    const {token} = req.params
+    const {password} = req.body
+
+    try {
+        const decoded =  await jwt.verify(token, process.env.KEY)
+        const id = decoded.id
+        const hashpassword = await bcrypt.hash(password,10)
+        await User.findByIdAndUpdate({_id :id},{password:hashpassword})
+        return res.json({status : true}, {message:'updated password'})
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 export {router as UserRouter}
